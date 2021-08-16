@@ -53,6 +53,7 @@ if str(text_output.values[0][0])== "not find":
     text_output = model_predict(nlp,df)
 
 # show predict result
+st.image('./bert.png')
 button = st.button('predict')
 
 if not button:
