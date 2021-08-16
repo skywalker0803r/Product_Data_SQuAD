@@ -390,3 +390,35 @@ def knowledge_distillation(n=3):
         gc.collect()
 
     return model.eval()
+
+def model_predict(nlp,df):
+    table = pd.DataFrame()
+    idx_list = sorted(df.index.tolist())
+    for i in tqdm(idx_list):
+        sample = df.loc[[i]]
+        string_X_train = sample['string_X_train'].values[0]
+        QA_input = {
+            'question': 'What is the product name?',
+            'context': string_X_train
+        }
+        res = nlp(QA_input)
+        predict = QA_input['context'][res['start']:res['end']]
+        row = pd.DataFrame({'predict:':predict},index=[i])
+        table = table.append(row)
+    return table
+
+def Collection_method(df,產品集合):
+    labels = {}
+    for i in tqdm(df.index):
+        products = []
+        for p in 產品集合:
+            if p in df.loc[i,'string_X_train']:
+                products.append(p)
+        try:
+            labels[i] = max(products,key=len)
+        except:
+            labels[i] = 'not find'
+    predict = pd.DataFrame(index=labels.keys(),columns=['predict'])
+    predict['predict'] = labels.values()
+    return predict
+    
